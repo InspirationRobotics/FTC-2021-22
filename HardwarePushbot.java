@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.hardware.Sensor;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -64,8 +66,8 @@ public class HardwarePushbot
     public Servo    dropper     = null;
     public Servo flipperLeft = null;
     public Servo flipperRight = null;
-    public Servo distanceFront = null;
-    public Servo distanceBack = null;
+    //public Servo distanceFront = null;
+    // public Servo distanceBack = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -93,8 +95,8 @@ public class HardwarePushbot
         dropper = hwMap.get(Servo.class, "dropper");
         flipperLeft = hwMap.get(Servo.class, "flipperLeft");
         flipperRight = hwMap.get(Servo.class, "flipperRight");
-        distanceFront = hwMap.get(Servo.class, "distanceFront");
-        distanceBack = hwMap.get(Servo.class, "distanceBack");
+        //distanceFront = hwMap.get(Servo.class, "distanceFront");
+        //distanceBack = hwMap.get(Servo.class, "distanceBack");
         leftFront.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
