@@ -1,3 +1,4 @@
+package archive_21;
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -26,137 +27,182 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import static java.lang.Thread.sleep;
 
-package org.firstinspires.ftc.teamcode;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+@TeleOp(name="Stormbot TeleopTank_Iterative", group="Pushbot")
 
-@TeleOp(name="Pushbot: TeleopTank", group="Pushbot")
+public class PushbotTeleopTank_Iterative extends OpMode {
 
-public class PushbotTeleopTank_Iterative extends OpMode{
+    private ElapsedTime runtime = new ElapsedTime();
+    public DcMotor  leftFront   = null;
+    public DcMotor  leftBack    = null;
+    public DcMotor  rightFront  = null;
+    public DcMotor  rightBack  = null;
+    public DcMotor  turret  = null;
+   // public ColorSensor colorturret  = null;
+    public DcMotor  spinner  = null;
+    public DcMotor  collector   = null;
+    public DcMotor  extension    = null;
+    public DcMotor  depositor    = null;
+    public Servo    dropper     = null;
+    public Servo flipper = null;
 
     public static final double SERVO_POSITION = 0.7;
     public static final double SERVO_RETRACTED_POSITION = 1.0;
 
     /* Declare OpMode members. */
-    HardwarePushbot robot       = new HardwarePushbot(); // use the class created to define a Pushbot's hardware
-    double          clawOffset  = 0.0 ;                  // Servo mid position
-    final double    CLAW_SPEED  = 0.02 ;                 // sets rate to move servo
+   // private ElapsedTime run  = new ElapsedTime();
+    HardwarePushbot robot = new HardwarePushbot(); // use the class created to define a Pushbot's hardware
+    double clawOffset = 0.0;                  // Servo mid position
+    final double CLAW_SPEED = 0.02;                 // sets rate to move servo
+    double TPR = 384.5;
+    double TP360 = TPR * 8;
 
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
     @Override
     public void init() {
-        /* Init the hardware variables
-         * The init() method of the hardware class does all the work here
-         */
-        robot.init(hardwareMap);
 
-        // Send telemetry message to signify robot waiting;
+        robot.leftFront = hardwareMap.dcMotor.get("leftFront");
+        robot.leftBack = hardwareMap.dcMotor.get("leftBack");
+        robot.rightFront = hardwareMap.dcMotor.get("rightFront");
+        robot.rightBack = hardwareMap.dcMotor.get("rightBack");
+        robot.spinner = hardwareMap.dcMotor.get("spinner");
+        robot.depositor = hardwareMap.servo.get("depositor");
+        robot.turret = hardwareMap.dcMotor.get("turret");
+        robot.collector = hardwareMap.dcMotor.get("collector");
+        robot.extension = hardwareMap.dcMotor.get("extension");
+        robot.flipper = hardwareMap.servo.get("flipper");
+        robot.colorturret = hardwareMap.colorSensor.get("colorturret");
+
+        robot.leftFront.setDirection(DcMotor.Direction.REVERSE);
+        robot.leftBack.setDirection(DcMotor.Direction.REVERSE);
+
+
         telemetry.addData("Say", "Hello Driver");    //
     }
+
 
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
     @Override
+
     public void init_loop() {
+
     }
 
-    /*
-     * Code to run ONCE when the driver hits PLAY
-     */
+
     @Override
     public void start() {
+
     }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
-     */
     @Override
     public void loop() {
 
-        robot.leftFront.setPower(gamepad1.left_stick_y);
-        robot.rightFront.setPower(-gamepad1.right_stick_y);
-        robot.leftBack.setPower(gamepad1.left_stick_y);
+        robot.leftFront.setPower(-gamepad1.left_stick_y);
+        robot.rightFront.setPower(gamepad1.right_stick_y);
+        robot.leftBack.setPower(-gamepad1.left_stick_y);
         robot.rightBack.setPower(-gamepad1.right_stick_y);
 
-        if (gamepad1.left_trigger >= 1.0 && gamepad1.right_trigger < 1.0) {
-            // right trigger is not pressed value of 0
-            // left trigger is pressed values greater than 0.5
-            robot.leftFront.setPower(1.0);
-            robot.rightFront.setPower(1.0);
-            robot.leftBack.setPower(-1.0);
-            robot.rightBack.setPower(-1.0);
 
-        } else if (gamepad1.left_trigger < 1.0 && gamepad1.right_trigger >= 1.0) {
-            // right trigger is pressed value greater than 0.5
-            // left trigger is not pressed value of 0
-            robot.leftFront.setPower(-1.0);
-            robot.rightFront.setPower(-1.0);
-            robot.leftBack.setPower(1.0);
-            robot.rightBack.setPower(1.0);
-        } else {
-            robot.leftFront.setPower(0);
-            robot.rightFront.setPower(0);
-            robot.leftBack.setPower(0);
-            robot.rightBack.setPower(0);
+        robot.turret.setPower(gamepad2.left_stick_y);
+        robot.extension.setPower(-gamepad2.right_stick_y);
+        if (gamepad2.dpad_up) {
+            telemetry.addData("Blue", robot.colorturret.blue());
+            telemetry.addData("Red", robot.colorturret.red());
+            telemetry.update();
 
-
-        }
-
-        // Use gamepad buttons to move the arm up (Y) and down (A)
-        if (gamepad1.right_bumper)
-            robot.collector.setPower(1);
-        else if (gamepad1.left_bumper)
-            robot.collector.setPower(-1);
-        else
-            robot.collector.setPower(0.0);
-
-        if(gamepad2.left_bumper)robot.spinner.setPower(0.4);
-        else if (gamepad2.right_bumper) {
-            robot.spinner.setPower(-0.4);
-        }
-        else {
-            robot.spinner.setPower(0);
-        }
-        robot.extender.setPower(-gamepad2.left_stick_y);
-
-        if(gamepad2.left_trigger > 0.1){
-            robot.dropper.setPosition(SERVO_POSITION);
-        }
-
-        if(gamepad2.right_trigger > 0.1){
-            robot.dropper.setPosition(SERVO_RETRACTED_POSITION);
+            while (robot.colorturret.blue() < 800) {
+                turret.setPower(0.2);
+            }
+            turret.setPower(0);
         }
 
         if (gamepad2.dpad_down) {
-            robot.flipperLeft.setPosition(0.5);
-            robot.dropper.setPosition(0);
+            telemetry.addData("Blue", robot.colorturret.blue());
+            telemetry.addData("Red", robot.colorturret.red());
+            telemetry.update();
+
+            while (robot.colorturret.red() < 1000) {
+                turret.setPower(-0.2);
+            }
+            turret.setPower(0);
         }
 
-        if (gamepad2.dpad_up){
-            robot.flipperLeft.setPosition(0.0);
-            robot.dropper.setPosition(0.7);
+            if (gamepad2.a) {
+                robot.depositor.setPosition(0.85);
+                robot.flipper.setPosition(1);
+            }
+            if (gamepad2.b) {
+                robot.flipper.setPosition(0.5);
+            }
+            if (gamepad2.x) {
+                robot.depositor.setPosition(0.5);
+                robot.flipper.setPosition(-1);
+            }
 
+            if (gamepad1.left_trigger >= 1.0 && gamepad1.right_trigger < 1.0) {
+                robot.leftFront.setPower(-1.0);
+                robot.rightFront.setPower(-1.0);
+                robot.leftBack.setPower(1.0);
+                robot.rightBack.setPower(-1.0);
+
+            } else if (gamepad1.left_trigger < 1.0 && gamepad1.right_trigger >= 1.0) {
+
+                robot.leftFront.setPower(1.0);
+                robot.rightFront.setPower(1.0);
+                robot.leftBack.setPower(-1.0);
+                robot.rightBack.setPower(1.0);
+            } else {
+                robot.leftFront.setPower(0);
+                robot.rightFront.setPower(0);
+                robot.leftBack.setPower(0);
+                robot.rightBack.setPower(0);
+            }
+
+
+            if (gamepad2.left_trigger >= 1.0 && gamepad2.right_trigger < 1.0) {
+                robot.depositor.setPosition(1);
+
+            }
+            else if (gamepad2.left_trigger < 1.0 && gamepad2.right_trigger >= 1.0) {
+                robot.depositor.setPosition(0.5);
+            }
+
+
+            if (gamepad1.right_bumper)
+                robot.collector.setPower(0.8);
+            else if (gamepad1.left_bumper)
+                robot.collector.setPower(-0.8);
+            else
+                robot.collector.setPower(0.0);
+
+            if (gamepad2.left_bumper)
+                robot.spinner.setPower(0.4);
+            else if (gamepad2.right_bumper) {
+                robot.spinner.setPower(-0.4);
+            } else {
+                robot.spinner.setPower(0);
+            }
 
         }
 
+        @Override
+        public void stop () {
+        }
     }
 
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
 
 
 
-    @Override
-    public void stop() {
-    }
-}
+
+
+

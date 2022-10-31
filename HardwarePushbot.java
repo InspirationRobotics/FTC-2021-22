@@ -1,3 +1,4 @@
+package archive_21;
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -27,12 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
-
 import android.hardware.Sensor;
-
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -60,14 +59,17 @@ public class HardwarePushbot
     public DcMotor  leftBack    = null;
     public DcMotor  rightFront  = null;
     public DcMotor  rightBack  = null;
+    public DcMotor  turret  = null;
+    public ColorSensor  colorturret  = null;
     public DcMotor  spinner  = null;
     public DcMotor  collector   = null;
-    public DcMotor  extender    = null;
-    public Servo    dropper     = null;
-    public Servo flipperLeft = null;
-    public Servo flipperRight = null;
+    public DcMotor  extension    = null;
+    public Servo  depositor    = null;
+    public Servo flipper = null;
+
     //public Servo distanceFront = null;
     // public Servo distanceBack = null;
+
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -91,16 +93,18 @@ public class HardwarePushbot
 
         spinner = hwMap.get(DcMotor.class, "spinner");
         collector = hwMap.get(DcMotor.class, "collector");
-        extender = hwMap.get(DcMotor.class, "extender");
-        dropper = hwMap.get(Servo.class, "dropper");
-        flipperLeft = hwMap.get(Servo.class, "flipperLeft");
-        flipperRight = hwMap.get(Servo.class, "flipperRight");
+        extension = hwMap.get(DcMotor.class, "extension");
+        depositor = hwMap.get(Servo.class, "depositor");
+        turret = hwMap.get(DcMotor.class, "turret");
+        flipper = hwMap.get(Servo.class, "flipper");
+        colorturret = hwMap.get(ColorSensor.class, "colorturret");
+
+
         //distanceFront = hwMap.get(Servo.class, "distanceFront");
         //distanceBack = hwMap.get(Servo.class, "distanceBack");
         leftFront.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         rightBack.setDirection(DcMotor.Direction.FORWARD);
-
     }
 }
